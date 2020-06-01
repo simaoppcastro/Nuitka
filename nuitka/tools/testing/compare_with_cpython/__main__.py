@@ -683,7 +683,16 @@ Exit codes {exit_cpython:d} (CPython) != {exit_nuitka:d} (Nuitka)""".format(
         exit_code = exit_code_stdout or exit_code_stderr or exit_code_return
 
         if exit_code:
-            sys.exit("Error, outputs differed.")
+
+            def _message():
+                if exit_code_stdout:
+                    yield "stdout"
+                if exit_code_stderr:
+                    yield "stderr"
+                if exit_code_return:
+                    yield "exit_code"
+
+            sys.exit("Error, results differed (%s)." % ",".join(_message()))
 
         if expect_success and exit_cpython != 0:
             if silent_mode:
